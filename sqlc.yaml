@@ -10,4 +10,5 @@ packages:
     emit_interface: false
     emit_exact_table_names: false
     json_tags_case_style: "camel"
+    emit_empty_slices: true
     
