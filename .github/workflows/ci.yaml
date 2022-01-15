@@ -40,8 +40,9 @@ jobs:
 
     - name: Install golang-migrate
       run: |
-        tar -xvf migrate.linux-amd64.tar.gz migrate
-        sudo mv migrate /usr/bin/migrate
+        sudo mkdir migrate
+        tar -xvf migrate.linux-amd64.tar.gz -C ./migrate
+        sudo mv migrate /usr/bin
         which migrate
     - name: Run migrations
       run: make migrateup
