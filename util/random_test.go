@@ -43,3 +43,9 @@ func TestRandomCurrency(t *testing.T) {
 	rand1 := RandomCurrency()
 	require.Contains(t, currencies, rand1)
 }
+
+func TestRandomEmail(t *testing.T) {
+	rand1 := RandomEmail()
+	require.Len(t, rand1, 16)
+	require.Contains(t, rand1, "@")
+}
