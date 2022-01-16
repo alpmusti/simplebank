@@ -2,10 +2,12 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 
 	db "github.com/alpmusti/simplebank/db/sqlc"
+	"github.com/alpmusti/simplebank/token"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,14 +30,21 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 		return
 	}
 
-	toAccount, valid := server.validAccount(ctx, req.ToAccountID, req.Currency)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if fromAccount.Owner != authPayload.Username {
+		err := errors.New("from account does not belong to the authenticated user")
+		ctx.JSON(http.StatusUnauthorized, respondWithError(err))
+		return
+	}
+
+	_, valid = server.validAccount(ctx, req.ToAccountID, req.Currency)
 	if !valid {
 		return
 	}
 
 	arg := db.TransferTxParams{
-		FromAccountID: fromAccount.ID,
-		ToAccountID:   toAccount.ID,
+		FromAccountID: req.FromAccountID,
+		ToAccountID:   req.ToAccountID,
 		Amount:        req.Amount,
 	}
 
